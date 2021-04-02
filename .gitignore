@@ -1,3 +1,6 @@
 *.exe
 *.svg
 *.pdb
+*.dll
+SVGToManim/bin/
+SVGToManim/obj/
