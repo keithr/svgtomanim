@@ -1,18 +1,9 @@
 ﻿using System;
-using System.CodeDom;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Drawing;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Security.Cryptography.X509Certificates;
-using System.Threading;
 using Aspose.Svg;
-using Aspose.Svg.Collections;
 using Aspose.Svg.Dom;
 using Aspose.Svg.Dom.Traversal.Filters;
 using Aspose.Svg.Paths;
@@ -182,7 +173,6 @@ namespace SVGToManim
                     if (index < s.Length && s[index] == ':')
                     {
                         index++;
-                        var contents = "";
                         while (index < s.Length && s[index] != ';' && s[index] != '}')
                             index++;
                         index++;

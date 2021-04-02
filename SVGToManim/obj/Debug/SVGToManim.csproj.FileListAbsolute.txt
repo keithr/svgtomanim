@@ -1,9 +1,0 @@
-C:\Users\keith\OneDrive\Desktop\SVGToManim\SVGToManim\bin\Debug\SVGToManim.exe.config
-C:\Users\keith\OneDrive\Desktop\SVGToManim\SVGToManim\bin\Debug\SVGToManim.exe
-C:\Users\keith\OneDrive\Desktop\SVGToManim\SVGToManim\bin\Debug\SVGToManim.pdb
-C:\Users\keith\OneDrive\Desktop\SVGToManim\SVGToManim\bin\Debug\Aspose.SVG.dll
-C:\Users\keith\OneDrive\Desktop\SVGToManim\SVGToManim\bin\Debug\Aspose.SVG.xml
-C:\Users\keith\OneDrive\Desktop\SVGToManim\SVGToManim\obj\Debug\SVGToManim.csproj.CoreCompileInputs.cache
-C:\Users\keith\OneDrive\Desktop\SVGToManim\SVGToManim\obj\Debug\SVGToManim.csproj.CopyComplete
-C:\Users\keith\OneDrive\Desktop\SVGToManim\SVGToManim\obj\Debug\SVGToManim.exe
-C:\Users\keith\OneDrive\Desktop\SVGToManim\SVGToManim\obj\Debug\SVGToManim.pdb
