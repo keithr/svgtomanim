@@ -1,2 +1,5 @@
 SVGToManim/bin/
 SVGToManim/obj/
+Tests/bin
+Tests/obj
+.vs/

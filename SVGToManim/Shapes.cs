@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
+using System.IO;
 using Aspose.Svg;
 using Aspose.Svg.Dom;
 using Aspose.Svg.Dom.Traversal.Filters;
@@ -285,10 +286,30 @@ namespace SVGToManim
 
     public interface IShape
     {
+        /// <summary>
+        /// 
+        /// </summary>
         Style Style { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         ITransform Transform { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="symbols"></param>
+        /// <param name="indent"></param>
+        /// <param name="scale"></param>
+        /// <returns></returns>
         string ToManim(List<string> symbols = null, int indent = 0, double scale = double.NaN);
+        /// <summary>
+        /// 
+        /// </summary>
         RectD Bounds { get; }
+        /// <summary>
+        /// 
+        /// </summary>
+        int Count { get; }
     }
 
     public class Group : IShape, IEnumerable<IShape>
@@ -361,6 +382,11 @@ namespace SVGToManim
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public int Count => _group.Count;
+
         public IEnumerator<IShape> GetEnumerator()
         {
             return _group.GetEnumerator();
@@ -418,6 +444,8 @@ namespace SVGToManim
         /// 
         /// </summary>
         public RectD Bounds => new RectD {Left = X, Top = Y, Height = Height, Width = Width};
+
+        public int Count { get; } = 0;
 
         /// <summary>
         /// 
@@ -743,6 +771,11 @@ namespace SVGToManim
 
         public RectD Bounds { get; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public int Count { get; } = 0;
+
         public IEnumerator<PolyItem> GetEnumerator()
         {
             return _items.GetEnumerator();
@@ -809,6 +842,11 @@ namespace SVGToManim
 
         public RectD Bounds { get; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public int Count { get; } = 0;
+
         public static IShape ToShape(Stack<Group> top, Stack<Style> style, Dictionary<string, Style> styledict, Node item)
         {
             double cx, cy, r;
@@ -870,6 +908,8 @@ namespace SVGToManim
         }
 
         public RectD Bounds { get; }
+
+        public int Count { get; } = 0;
 
         public static IShape ToShape(Stack<Group> top, Stack<Style> style, Dictionary<string, Style> styledict, Node item)
         {
@@ -975,7 +1015,7 @@ namespace SVGToManim
                     top.Peek().Add(Path.ToShape(top, style, styledict, item));
                     break;
                 default:
-                    Console.WriteLine(item);
+                    //Console.WriteLine(item);
                     break;
 
             }
