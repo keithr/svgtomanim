@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Text;
 using System.Drawing;
 using System.IO;
+using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using Aspose.Svg;
+using Aspose.Svg.Collections;
 using Aspose.Svg.Dom;
 using Aspose.Svg.Dom.Traversal.Filters;
 using Aspose.Svg.Paths;
@@ -186,6 +190,26 @@ namespace SVGToManim
             while (index < s.Length && s[index] != '}')
                 index++;
             index++;
+        }
+
+
+
+        public static Color StringToColor(string s)
+        {
+            if (s.Length == 4 && s[0] == '#')
+            {
+                var hex = s.Substring(1);
+                var intValue = int.Parse(hex, System.Globalization.NumberStyles.HexNumber);
+                return Color.FromArgb(255, (intValue >> 8) * 16, ((intValue >> 4) & 0xf) * 16, (intValue & 0xf) * 16);
+            }
+            else if (s.Length == 7 && s[0] == '#')
+            {
+                var hex = s.Substring(1);
+                var intValue = int.Parse(hex, System.Globalization.NumberStyles.HexNumber);
+                return Color.FromArgb(255, (intValue >> 16) & 0xff, ((intValue >> 8) & 0xff), (intValue & 0xff));
+            }
+
+            return Color.White;
         }
 
         public static Style ToStyle(Stack<Group> top, Stack<Style> style, Dictionary<string, Style> styledict, Node item)
@@ -708,7 +732,42 @@ namespace SVGToManim
             return poly;
         }
 
-        public RectD Bounds { get; }
+        public RectD Bounds
+        {
+            get
+            {
+                if (_items.Count > 0)
+                {
+                    var retval = new RectD{Left=_items[0].X, Top = _items[0].Y, Height = 0.0, Width = 0.0};
+
+                    foreach (var item in _items)
+                    {
+                        if (item.X < retval.Left)
+                        {
+                            retval.Width = retval.Width + (retval.Left - item.X);
+                            retval.Left = item.X;
+                        }
+                        else if (item.X > retval.Left + retval.Width)
+                        {
+                            retval.Width += item.X - (retval.Left + retval.Width);
+                        }
+
+                        if (item.Y < retval.Top)
+                        {
+                            retval.Height = retval.Height + (retval.Top - item.Y);
+                            retval.Top = item.Y;
+                        }
+                        else if (item.Y > retval.Top + retval.Height)
+                        {
+                            retval.Height += item.Y - (retval.Top + retval.Height);
+                        }
+                    }
+
+                    return retval;
+                }
+                return new RectD();
+            }
+        }
 
 
         public IEnumerator<PolyItem> GetEnumerator()
@@ -769,7 +828,42 @@ namespace SVGToManim
             return sb.ToString();
         }
 
-        public RectD Bounds { get; }
+        public RectD Bounds
+        {
+            get
+            {
+                if (_items.Count > 0)
+                {
+                    var retval = new RectD { Left = _items[0].X, Top = _items[0].Y, Height = 0.0, Width = 0.0 };
+
+                    foreach (var item in _items)
+                    {
+                        if (item.X < retval.Left)
+                        {
+                            retval.Width = retval.Width + (retval.Left - item.X);
+                            retval.Left = item.X;
+                        }
+                        else if (item.X > retval.Left + retval.Width)
+                        {
+                            retval.Width += item.X - (retval.Left + retval.Width);
+                        }
+
+                        if (item.Y < retval.Top)
+                        {
+                            retval.Height = retval.Height + (retval.Top - item.Y);
+                            retval.Top = item.Y;
+                        }
+                        else if (item.Y > retval.Top + retval.Height)
+                        {
+                            retval.Height += item.Y - (retval.Top + retval.Height);
+                        }
+                    }
+
+                    return retval;
+                }
+                return new RectD();
+            }
+        }
 
         /// <summary>
         /// 
@@ -840,7 +934,7 @@ namespace SVGToManim
             return sb.ToString();
         }
 
-        public RectD Bounds { get; }
+        public RectD Bounds => new RectD {Left = CX - R, Top = CY - R, Width = R*2, Height = R*2};
 
         /// <summary>
         /// 
@@ -907,7 +1001,7 @@ namespace SVGToManim
             return sb.ToString();
         }
 
-        public RectD Bounds { get; }
+        public RectD Bounds => new RectD { Left = CX - RX, Top = CY - RY, Width = RX*2, Height = RY*2 };
 
         public int Count { get; } = 0;
 
@@ -1009,16 +1103,52 @@ namespace SVGToManim
                 case "text":
                     break;
                 case "polygon":
+                    var s1 = AttributeStyle(item.Attributes);
+                    if (s1 != null)
+                        style.Push(s1);
                     top.Peek().Add(Polygon.ToShape(top, style, styledict, item));
+                    if (s1 != null)
+                        style.Pop();
                     break;
                 case "path":
+                    var s2 = AttributeStyle(item.Attributes);
+                    if (s2 != null)
+                        style.Push(s2);
                     top.Peek().Add(Path.ToShape(top, style, styledict, item));
+                    if (s2 != null)
+                        style.Pop();
                     break;
                 default:
                     //Console.WriteLine(item);
                     break;
 
             }
+        }
+
+        private static Style AttributeStyle(NamedNodeMap attributes)
+        {
+            bool bStyleSet = false;
+            var style = new Style();
+            foreach (var item in attributes)
+            {
+                if (String.Compare(item.LocalName, "fill", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    style.Fill = Style.StringToColor(item.NodeValue);
+                    bStyleSet = true;
+                }
+
+                if (String.Compare(item.LocalName, "stroke", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    style.Stroke = Style.StringToColor(item.NodeValue);
+                    bStyleSet = true;
+                }
+                var lname = item.LocalName;
+                var n = item.NodeName;
+                var t = item.NodeType;
+                var x = item.NodeValue;
+            }
+
+            return bStyleSet ? style : null;
         }
 
         public static IShape ReadSVG(string filename)

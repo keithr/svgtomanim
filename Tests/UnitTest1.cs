@@ -88,7 +88,7 @@ namespace Tests
         public void TestPatternReadWrite()
         {
             var docs = SVGToManim.SVGToManim.ReadSVG("https://upload.wikimedia.org/wikipedia/commons/b/bd/Test.svg");
-            Assert.AreEqual(7, docs.Count);
+            Assert.AreEqual(4, docs.Count);
             string output = docs.ToManim();
             Assert.IsTrue(output.Length > 0);
             Console.WriteLine(output);
